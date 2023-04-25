@@ -2,19 +2,20 @@
 MYNAME=MoncorgeLeprat
 
 ## DO NOT change below
+OUTDIR=../build
 HERE=$(PWD)
-CLASS_PATH=../../../V2/:.
+CLASS_PATH=../../../V2/:$(OUTDIR)
 
 all: run
 
 # Compile
 %.class: %.java
-	javac -cp $(CLASS_PATH) $^
+	javac -cp $(CLASS_PATH) $^ -d $(OUTDIR)
 
 all: run
 # Run
 run: FindArray.class
-	java -cp $(CLASS_PATH) FindArray 
+	java -cp $(CLASS_PATH) $(OUTDIR)FindArray 
 
 tar: clean
 	dir=$$(basename $$PWD/$$SRC) && cd .. && \
