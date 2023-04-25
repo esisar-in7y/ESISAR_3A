@@ -6,7 +6,7 @@ MAINCLASS=FindArray
 OUTDIR=./build
 SRC=./src
 HERE=$(PWD)
-CLASS_PATH=../../../V2/:$(OUTDIR)
+CLASS_PATH=$(OUTDIR)
 SRCJAVA=$(wildcard $(SRC)/*.java)
 CLASSFILES = $($(SRCJAVA:.java=.class):$(SRC)=$(OUTDIR))
 
@@ -14,12 +14,12 @@ all: run
 
 # Compile
 %.class: %.java
-	javac -cp $(CLASS_PATH) $^ -d $(OUTDIR)
+	javac -cp $(CLASS_PATH) -d $(OUTDIR) $^
 
 all: run
 # Run
 run: $(SRC)/$(MAINCLASS).class
-	java -cp $(CLASS_PATH) $(SRC)/$(MAINCLASS)
+	java -cp build/ IO.Files
 
 tar: clean
 	dir=$$(basename $$PWD/$$SRC) && cd .. && \
