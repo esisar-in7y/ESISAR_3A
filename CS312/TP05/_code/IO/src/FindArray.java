@@ -19,5 +19,6 @@ public class FindArray {
         catch(Exception e) {
             throw new NoSuchElementException();
         }
+        return -1;
     }
 }
