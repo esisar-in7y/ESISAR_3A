@@ -2,9 +2,13 @@
 MYNAME=MoncorgeLeprat
 
 ## DO NOT change below
-OUTDIR=../build
+MAINCLASS=FindArray
+OUTDIR=./build
+SRC=./src
 HERE=$(PWD)
 CLASS_PATH=../../../V2/:$(OUTDIR)
+SRCJAVA=$(wildcard $(SRC)/*.java)
+CLASSFILES = $($(SRCJAVA:.java=.class):$(SRC)=$(OUTDIR))
 
 all: run
 
@@ -14,12 +18,12 @@ all: run
 
 all: run
 # Run
-run: FindArray.class
-	java -cp $(CLASS_PATH) $(OUTDIR)FindArray 
+run: $(SRC)/$(MAINCLASS).class
+	java -cp $(CLASS_PATH) $(SRC)/$(MAINCLASS)
 
 tar: clean
 	dir=$$(basename $$PWD/$$SRC) && cd .. && \
 	tar cvfz "TP05-$(MYNAME).tgz" --exclude=".git" "$$dir"
 
 clean:
-	rm -f *.class *~
+	rm -f $(OUTDIR)/*.class $(SRC)/*~ *~

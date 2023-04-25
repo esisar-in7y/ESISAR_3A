@@ -6,7 +6,6 @@ import java.util.NoSuchElementException;
 public class FindArray {
 
     public int findElement(int[] array, int element) throws NoSuchElementException {
-        // TODO : implement this method
         try {
 			for (int i = 0; i < array.length; i++) {
                 if (i == element) {
