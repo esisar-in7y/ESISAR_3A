@@ -5,13 +5,13 @@ import java.util.NoSuchElementException;
 
 public class FindArray {
 
-    public void findElement(int[] array, int element) {
+    public int findElement(int[] array, int element) {
         // TODO : implement this method
         try {
-			for (int i : array) {
+			for (int i = 0; i < array.length; i++) {
                 if (i == element) {
                     System.out.println("Found");
-                    return;
+                    return i;
                 }
             }
             System.out.println("Not found");
