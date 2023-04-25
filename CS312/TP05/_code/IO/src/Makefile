@@ -2,25 +2,23 @@
 MYNAME=MoncorgeLeprat
 
 ## DO NOT change below
-SRC=FSMIO
 HERE=$(PWD)
-MAINCLASS=TestFSMIO
-SRCJAVA=$(wildcard $(SRC)/*.java)
-CLASSFILES = $(SRCJAVA:.java=.class)
+CLASS_PATH=../../../V2/:.
 
 all: run
 
 # Compile
 %.class: %.java
-	javac $^
+	javac -cp $(CLASS_PATH) $^
 
+all: run
 # Run
-run: $(SRC)/$(MAINCLASS).class
-	java $(SRC)/$(MAINCLASS)
+run: FindArray.class
+	java -cp $(CLASS_PATH) FindArray 
 
 tar: clean
 	dir=$$(basename $$PWD/$$SRC) && cd .. && \
-	tar cvfz "TP04-$(MYNAME).tgz" --exclude=".git" "$$dir"
+	tar cvfz "TP05-$(MYNAME).tgz" --exclude=".git" "$$dir"
 
 clean:
-	rm -f $(SRC)/*.class $(SRC)/*~ *~
+	rm -f *.class *~
