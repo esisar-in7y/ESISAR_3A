@@ -1,3 +1,5 @@
+package bruteforce;
+
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Random;
@@ -6,6 +8,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter; // Import the FileWriter class
 import java.io.IOException;
+import bruteforce.*;
 
 public class bruteforce {
 	public static void main(String[] args) throws NoSuchAlgorithmException {
