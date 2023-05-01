@@ -1,3 +1,5 @@
+package Table;
+
 public class Noeud {
 	public int px;
 	public int p999;
