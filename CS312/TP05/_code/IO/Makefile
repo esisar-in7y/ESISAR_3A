@@ -21,6 +21,10 @@ all: run
 run: $(SRC)/$(MAINCLASS).class
 	java -cp build/ IO.Files
 
+doc:
+	javadoc -d docs src/*.java
+	firefox docs/index.html &
+
 tar: clean
 	dir=$$(basename $$PWD/$$SRC) && cd .. && \
 	tar cvfz "TP05-$(MYNAME).tgz" --exclude=".git" "$$dir"
