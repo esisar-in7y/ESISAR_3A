@@ -11,13 +11,7 @@ import java.io.IOException;
 
 public class calculchaine {
 
-    public String Int2String(int i) {
-        String str = String.format("%08d", i);
-        return str;
-    }
-
-    public String hash(String str) throws NoSuchAlgorithmException {
-        MessageDigest digest = MessageDigest.getInstance("MD5");
+    private static String hash(String str, MessageDigest digest) throws NoSuchAlgorithmException {
         byte[] hash = digest.digest(str.getBytes());
         StringBuilder sb = new StringBuilder();
         for (byte b : hash) {
@@ -26,7 +20,7 @@ public class calculchaine {
         return sb.toString();
     }
 
-    public byte[] String2Bytes(String s) {
+    private static byte[] String2Bytes(String s) {
         // Conversion de s en un tableau de byte, le premier byte est 0x40 , le deuxième
         // 0x41 , et ainsi de suite
         int len = s.length();
@@ -37,11 +31,9 @@ public class calculchaine {
         return data;
     }
 
-    private int reduction(byte[] bs, int num) {
+    private static int reduction(byte[] bs, int num) {
         int res = num;
-
         int mult = 1;
-
         for (int i = 0; i < 8; i++) {
             res = res + mult * ((bs[i] + 256) % 10);
             mult = mult * 10;
@@ -49,14 +41,14 @@ public class calculchaine {
         return res % 100_000_000;
     }
 
-    public int calculDeChaine(int px) // entier compris entre 1 et 99999999
+    private static int calculDeChaine(int px, MessageDigest digest) // entier compris entre 1 et 99999999
     {
         int p999 = 0;
         for (int i = 0; i < 1000; i++) {
-            String str = Int2String(px);
+            String str = String.format("%08d", px);
             String hash = "";
             try {
-                hash = hash(str);
+                hash = hash(str, digest);
             } catch (NoSuchAlgorithmException e) {
                 e.printStackTrace();
             }
@@ -68,8 +60,15 @@ public class calculchaine {
     }
 
     public static void main(String[] args) {
-        calculchaine cc = new calculchaine();
-        int px = 1;
-        System.out.println(cc.calculDeChaine(px)); // 43183201
+        try {
+            MessageDigest digest = MessageDigest.getInstance("MD5");
+            if(calculDeChaine(1, digest)==43183201){
+                System.out.println("OK");
+            }else{
+                System.out.println("KO");
+            }
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
     }
 }
