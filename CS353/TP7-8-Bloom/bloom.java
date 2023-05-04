@@ -13,17 +13,19 @@ import java.nio.file.StandardOpenOption;
 
 public class bloom {
 
-    private int m;
-    private int k;
-    private boolean[] filter = new boolean[m];
+    private  static int m=1000000;
+    private  static int k=11;
+    private static  boolean[] filter = new boolean[m];
+    private static int fauxpositif=0;
+    private static int vraifauxpositif=0;
 
-    public void bloomInit() {
+    public static  void bloomInit() {
         for (int i = 0; i < m; i++) {
             filter[i] = false;
         }
     }
 
-    private int hash(String value, int numFonction) {
+    private static  int hash(String value, int numFonction) {
         int h1 = h1(value);
         int h2 = h2(value);
         int h = ((h1 + numFonction * h2) % m);
@@ -31,7 +33,7 @@ public class bloom {
         return h;
     }
 
-    private int h1(String value) {
+    private static  int h1(String value) {
         char val[] = value.toCharArray();
         int h = 0;
         for (int i = 0; i < val.length; i++) {
@@ -40,7 +42,7 @@ public class bloom {
         return h;
     }
 
-    private int h2(String value) {
+    private static  int h2(String value) {
         char val[] = value.toCharArray();
         int h = 0;
         for (int i = 0; i < val.length; i++) {
@@ -49,10 +51,9 @@ public class bloom {
         return h;
     }
 
-    private void readFile() throws IOException {
+    private static  void readFile() throws IOException {
         long start = System.currentTimeMillis();
-        SeekableByteChannel sbc = Files.newByteChannel(Paths.get("./URL.txt"),
-                StandardOpenOption.READ);
+        SeekableByteChannel sbc = Files.newByteChannel(Paths.get("./infected-urls.txt"),StandardOpenOption.READ);
         int count = 0;
         // Lecture des 50 000 premiers octets du fichier
         ByteBuffer buf = ByteBuffer.allocate(50_000);
@@ -63,6 +64,7 @@ public class bloom {
                 String str = new String(buf.array(), i * 50, 50);
                 // Suppression des espaces en fin de chaine
                 str = str.trim();
+                insertURL(str);
                 // Affichage de la chaine de caractères sur la console
                 // System.out.println(str);
                 count++;
@@ -77,39 +79,34 @@ public class bloom {
         sbc.close();
     }
 
-    private void insertURL(String URL) {
+    private static  void insertURL(String URL) {
+    	//System.out.println("|"+URL+"|");
         for (int i = 0; i < k; i++) {
-            int h = hash(URL, i);
-            filter[h] = true;
+            filter[hash(URL, i)] = true;
         }
     }
 
-    private boolean isPresent(String URL) {
+    private static  boolean isPresent(String URL) {
         for (int i = 0; i < k; i++) {
-            int h = hash(URL, i);
-            if (!filter[h]) {
+            if (!filter[hash(URL, i)]) {
                 return false;
             }
         }
+        //go to check in file if realtrue
+        // ohoh faux positif LOL
         return true;
     }
 
     public static void main(String[] args) {
-        bloom b = new bloom();
-        b.m = 1000000;
-        b.k = 10;
-        b.filter = new boolean[b.m];
-        b.bloomInit();
         try {
-            b.readFile();
+	        bloomInit();
+	        readFile();
+	        System.out.println(isPresent("http://sxv.aw/BFHuRvb"));
+	        System.out.println(isPresent("http://www.google.com"));
+	        System.out.println(isPresent("http://www.amazon.com"));
+	        System.out.println(isPresent("http://www.wikipedia.com"));
         } catch (IOException e) {
             e.printStackTrace();
         }
-        b.insertURL("http://www.google.com");
-        b.insertURL("http://www.amazon.com");
-        b.insertURL("http://www.wikipedia.com");
-        System.out.println(b.isPresent("http://www.google.com"));
-        System.out.println(b.isPresent("http://www.amazon.com"));
-        System.out.println(b.isPresent("http://www.wikipedia.com"));
     }
 }

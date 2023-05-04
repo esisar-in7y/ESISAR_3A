@@ -40,36 +40,26 @@ public class calculchaine {
         return res % 100_000_000;
     }
 
-    private static int calculDeChaine(int px, MessageDigest digest) // entier compris entre 1 et 99999999
+    private static int calculDeChaine(int px, MessageDigest digest) throws Exception// entier compris entre 1 et 99999999
     {
         String int_str;
         String hash = "";
         byte[] bs;
         for (int i = 0; i < 1000; i++) {
             int_str = String.format("%08d", px);
-            try {
-                hash = hash(int_str, digest);
-            } catch (NoSuchAlgorithmException e) {
-                e.printStackTrace();
-            }
+            hash = hash(int_str, digest);
             bs = String2Bytes(hash);
             px = reduction(bs, i);
         }
         return px;
     }
-    private static void write(Noeud[] table) {
-        try {
-			FileWriter myWriter = new FileWriter("table.txt");
-			for (Noeud tmp : table) {
-				if (tmp != null){
-                    myWriter.write(tmp.px + " " + tmp.p999 + "\n");
-                }
-			}
-			myWriter.close();
-			System.out.println("Successfully wrote to the file.");
-		} catch (IOException e) {
-			System.out.println("An error occurred.");
+    private static void write(Noeud[] table) throws Exception{
+		FileWriter myWriter = new FileWriter("table.txt");
+		for (Noeud tmp : table) {
+			if (tmp != null){myWriter.write(tmp.px + " " + tmp.p999 + "\n");}
 		}
+		myWriter.close();
+		System.out.println("Successfully wrote to the file.");
     }
     private static Noeud get(Noeud[] table, int p999) {
         int i = 0;
@@ -80,10 +70,11 @@ public class calculchaine {
             i++;
         }
         return null;
-	}
+    }
     private static void insert(Noeud[] table, int p999, Noeud noeud) {
         int i = 0;
         while (table[(p999 + i) % table.length] != null) {
+            if(table[(p999 + i) % table.length].p999==p999){ return;}
             i++;
         }
         table[(p999 + i) % table.length] = noeud;
@@ -102,12 +93,10 @@ public class calculchaine {
                 }
                 px = r.nextInt(100_000_000);
                 p999=calculDeChaine(px, digest);
-                if(get(table, p999)==null){
-                    insert(table, p999,new Noeud(px, p999));
-                }
+                insert(table, p999,new Noeud(px, p999));
             }
             write(table);
-        } catch (NoSuchAlgorithmException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
