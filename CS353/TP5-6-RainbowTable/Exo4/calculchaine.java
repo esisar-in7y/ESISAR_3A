@@ -44,6 +44,7 @@ public class calculchaine {
         int candidateInt;
         String candidateHash;
         byte[] candidateBytes;
+        Noeud node;
         for (int i = 999; i >= 0; i--) {
             targetBytes = String2Bytes(targetHash);
             targetInt = reduction(targetBytes, i);
@@ -51,7 +52,7 @@ public class calculchaine {
                 targetBytes = String2Bytes(hash(String.format("%08d", targetInt), digest));
                 targetInt = reduction(targetBytes, j);
             }
-            Noeud node = get(table, targetInt);
+            node = get(table, targetInt);
 
             if (node != null) {
                 candidateInt = node.px;
