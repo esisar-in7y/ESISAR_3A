@@ -45,10 +45,13 @@ public class calculchaine {
         String candidateHash;
         byte[] candidateBytes;
         Noeud node;
-        for (int i = 999; i >= 0; i--) {
+        String candidateStr;
+        int j;
+        int i;
+        for (i = 999; i >= 0; i--) {
             targetBytes = String2Bytes(targetHash);
             targetInt = reduction(targetBytes, i);
-            for (int j = i+1; j < 1000; j++) {
+            for (j = i+1; j < 1000; j++) {
                 targetBytes = String2Bytes(hash(String.format("%08d", targetInt), digest));
                 targetInt = reduction(targetBytes, j);
             }
@@ -56,8 +59,8 @@ public class calculchaine {
 
             if (node != null) {
                 candidateInt = node.px;
-                for (int j = 0; j <= i; j++) {
-                    String candidateStr = String.format("%08d", candidateInt);
+                for (j = 0; j <= i; j++) {
+                    candidateStr = String.format("%08d", candidateInt);
                     candidateHash = hash(candidateStr, digest);
                     if (candidateHash.equals(targetHash)) {
                         return candidateStr;
@@ -76,9 +79,11 @@ public class calculchaine {
         try {
             File myObj = new File("table.txt");
             Scanner myReader = new Scanner(myObj);
+            String data;
+            String[] splited;
             while (myReader.hasNextLine()) {
-                String data = myReader.nextLine();
-                String[] splited = data.split("\\s+");
+                data = myReader.nextLine();
+                splited = data.split("\\s+");
                 insert(table, Integer.parseInt(splited[1]),new Noeud(Integer.parseInt(splited[0]), Integer.parseInt(splited[1])));
             }
             myReader.close();
@@ -110,6 +115,7 @@ public class calculchaine {
 
     public static void main(String[] args) {
         Noeud[] table = read();
+
         String[] to_find = {
                 "38251B4C8C210841C60CDE0B7E4C7A87",
                 "367F3AC1129CC92DCBB8C4B9EA4EE55A",
