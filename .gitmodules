@@ -1,0 +1,3 @@
+[submodule "PROJETS/SERVER_WEB"]
+	path = PROJETS/SERVER_WEB
+	url = git@github.com:esisar-in7y/NE302_server_web.git
