@@ -39,22 +39,6 @@ public class bruteforce {
 			str = String.format("%08d", px);
 			hash = digest.digest(str.getBytes());
 		}
-		/*
-		 * Noeud[] table = new Noeud[1_000_003]; Random r = new Random(0); int px, p999
-		 * = 0; int i = 0; for (int j = 0; j < 99_999; j++) { px =
-		 * r.nextInt(100_000_000); p999 = calculChaine(px); if (!isin(table, p999)) {
-		 * table[i] = new Noeud(px, p999); i++; } } writetofile(table); /* MessageDigest
-		 * digest = MessageDigest.getInstance("MD5"); String str; String str2; for(int
-		 * i=17441942;i<99_999_999;i++) { str = String.format("%08d", i); byte[] hash =
-		 * digest.digest(str.getBytes()); StringBuilder sb = new StringBuilder(); for
-		 * (byte b : hash) { sb.append(String.format("%02X", b)); } str2=sb.toString();
-		 * if( str2.equals("8FC92036B2963C604DC38B2DDB305148") ||
-		 * str2.equals("367F3AC1129CC92DCBB8C4B9EA4EE55A") ||
-		 * str2.equals("38251B4C8C210841C60CDE0B7E4C7A87")
-		 * 
-		 * ) { System.out.print(str2); System.out.print("\t"); System.out.println(str);
-		 * } }
-		 */
 	}
 
 	private static Noeud getin(Noeud[] table, int p999) {
