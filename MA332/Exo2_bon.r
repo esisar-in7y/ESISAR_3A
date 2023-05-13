@@ -51,6 +51,7 @@ simulate_experience <- function(P) {
 n_experiences <- 10000
 times <- replicate(n_experiences, simulate_experience(P))
 mean_time <- mean(times)
+cat("temps median:",mean_time," semaines \n")
 
 
 #Q4
