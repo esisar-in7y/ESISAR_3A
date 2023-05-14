@@ -43,20 +43,20 @@ cat("Moyenne et variance empiriques des arrivées dans [0, T] =", moyenne_empiri
 
 
 lambda <- N_T / T  # Paramètre de la loi de Poisson
-temps_entre_arrivees <- cumsum(rexp(N_T, lambda))  # Calcul des instants d'arrivée
+instant_arrivee <- cumsum(rexp(N_T, lambda))  # Calcul des instants d'arrivée
 
 # Vérification de la loi Gamma avec un test de Kolmogorov-Smirnov
-ks.test(temps_entre_arrivees, pgamma, shape = N_T, scale = 1/lambda)
+ks.test(instant_arrivee, pgamma, shape = N_T, scale = 1/lambda)
 
 lambda <- N_T / T  # Paramètre de la loi de Poisson
 
 # Répéter la simulation jusqu'à obtenir N_T arrivées
 repeat {
-  temps_entre_arrivees <- cumsum(rexp(N_T, lambda))
-  if (temps_entre_arrivees[N_T] <= T) break
+  instant_arrivee <- cumsum(rexp(N_T, lambda))
+  if (instant_arrivee[N_T] <= T) break
 }
 
 # Vérification de la distribution uniforme
-hist(temps_entre_arrivees, breaks = seq(0, T, by = 1), freq = FALSE,
+hist(instant_arrivee, breaks = seq(0, T, by = 1), freq = FALSE,
      main = "Distribution des instants d'arrivée", xlab = "Temps (s)")
 abline(h = 1/T, col = "red")
