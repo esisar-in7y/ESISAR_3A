@@ -41,8 +41,6 @@ cat("Moyenne et variance empiriques des arrivées dans [0, T] =", moyenne_empiri
 
 # (iii)
 
-
-lambda <- N_T / T  # Paramètre de la loi de Poisson
 instant_arrivee <- cumsum(rexp(N_T, lambda))  # Calcul des instants d'arrivée
 
 # Vérification de la loi Gamma avec un test de Kolmogorov-Smirnov
