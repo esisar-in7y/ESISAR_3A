@@ -293,7 +293,8 @@ theoretical_op_rho <- rho_values / (1 - rho_values)
 
 
 plot(rho_values, op_rho, type = "l", xlab = "rho", ylab = "Opérationnel", main = "File M/M/1", col="blue")
-lines(rho_values, theoretical_op_rho, col = "red", lwd = 2)
+lines(T, array(data=(theoretical_op_rho),dim=length(theoretical_op_rho)), col="red", type="l", lwd = 2, lty = 2)
+# lines(rho_values, theoretical_op_rho, col = "red", lwd = 2)
 legend("bottomright", legend=c("Moyenne mesurée", "Moyenne théorique"),col=c("blue", "red"), lty = 1:2, lwd=2)
 
 
