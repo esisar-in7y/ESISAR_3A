@@ -227,3 +227,26 @@ evolution_qT_mm1 <- function(TT, mu, step){
   }
   plot(rho, qT, xlab="rho", ylab="qT(T)", type="l")
 }
+
+stochastic_parameter <- function(rho) {
+  L <- rho / (1 - rho)
+  return(L)
+}
+
+operational_parameter <- function(lambda, mu) {
+  W <- 1 / (mu - lambda)
+  return(W)
+}
+
+# Exemple de valeurs pour lambda, mu, et rho
+lambda <- 1
+mu <- 2
+rho_values <- seq(0, 0.99, by = 0.01)
+
+# Calculer les paramètres stochastiques et opérationnels pour chaque valeur de rho
+stochastic_params <- sapply(rho_values, stochastic_parameter)
+operational_params <- sapply(rho_values, function(rho) operational_parameter(lambda, mu * (1 - rho)))
+
+# Tracer les résultats
+plot(rho_values, stochastic_params, xlab = "rho", ylab = "Paramètre stochastique", type = "l")
+plot(rho_values, operational_params, xlab = "rho", ylab = "Paramètre opérationnel", type = "l")
