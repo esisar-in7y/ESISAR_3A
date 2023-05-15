@@ -40,21 +40,64 @@ cat("Moyenne et variance empiriques des arrivées dans [0, T] =", moyenne_empiri
 
 
 # (iii)
+# A
+# Fixer T et N(T)
 
-instant_arrivee <- cumsum(rexp(N_T, lambda))  # Calcul des instants d'arrivée
+# Définir l'intervalle de temps et le paramètre lambda
+T <- 60 # secondes
+num_arrivees <- 20
+num_simulations <- 100
+An <- matrix(nrow=num_arrivees, ncol=num_simulations)
 
-# Vérification de la loi Gamma avec un test de Kolmogorov-Smirnov
-ks.test(instant_arrivee, pgamma, shape = N_T, scale = 1/lambda)
-
-lambda <- N_T / T  # Paramètre de la loi de Poisson
-
-# Répéter la simulation jusqu'à obtenir N_T arrivées
-repeat {
-  instant_arrivee <- cumsum(rexp(N_T, lambda))
-  if (instant_arrivee[N_T] <= T) break
+for (i in 1:num_simulations) {
+  temps_entre_arrivees <- rexp(num_arrivees, rate = lambda)
+  temps_arrivees <- cumsum(temps_entre_arrivees)
+  An[, i] <- temps_arrivees
 }
 
-# Vérification de la distribution uniforme
-hist(instant_arrivee, breaks = seq(0, T, by = 1), freq = FALSE,
-     main = "Distribution des instants d'arrivée", xlab = "Temps (s)")
-abline(h = 1/T, col = "red")
+simu_utiles = list(2,5,10,20);
+for (n in simu_utiles) {
+  An_density <- density(An[n, ])
+  plot(An_density, main = paste("An =", n),
+       xlab = "Temps d'arrivée", ylab = "Densité")
+  lines(An_density$x, dgamma(An_density$x, n, rate = lambda), col = "red")
+}
+uniform_arrivals <- matrix(nrow=num_arrivees, ncol=num_simulations)
+
+for (i in 1:num_simulations) {
+  uniform_arrivals[, i] <- sort(runif(num_arrivees, min = 0, max = T))
+}
+
+for (n in simu_utiles) {
+  uniform_density <- density(uniform_arrivals[n, ])
+  plot(uniform_density, main = paste("Uniform Arrivals n =", n),
+       xlab = "Temps d'arrivée", ylab = "Densité")
+  lines(uniform_density$x, dgamma(uniform_density$x, n, rate = lambda), col = "red")
+}
+
+#B
+num_arrivees <- 20
+An <- matrix(nrow=num_arrivees, ncol=num_simulations)
+
+for (i in 1:num_simulations) {
+  # Simuler les temps entre arrivées en utilisant une distribution exponentielle
+  temps_entre_arrivees <- rexp(1000, rate = lambda)
+  # Calculer les temps d'arrivée à partir des temps entre arrivées
+  temps_arrivees <- cumsum(temps_entre_arrivees)
+  temps_arrivees_20 <- temps_arrivees[temps_arrivees <= T]
+  
+  if (length(temps_arrivees_20) == num_arrivees) {
+    An[, i] <- temps_arrivees_20
+  }
+}
+
+# Supprimer les colonnes vides dans la matrice An
+An <- An[, colSums(is.na(An)) != nrow(An)]
+
+# Tracé de la densité empirique de An et de la loi uniforme U([0:T])
+densitya <- density(An)
+x <- -1000:T+1000
+plot(x, dunif(x, min=0, max=T), col="red",
+     type="s",xlim=c(-100,T+100))
+lines(densitya, type="s")
+
