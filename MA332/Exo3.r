@@ -239,6 +239,15 @@ rho_values <- seq(0.1, 0.95, by = 0.05)
 T <- 1000
 T_values <- seq(100, T, by = 100)
 
+theoretical_op_rho <- rep(0, length(rho_values))
+lambda <- 0
+for (i in 1:length(rho_values)) {
+  lambda <- lambda + 0.1
+  mu <- 3
+  rho <- lambda/mu
+  theoretical_op_rho[i] <- rho_values[i]/(1 - rho_values[i])
+}
+
 # Fonction pour simuler la file M/M/1
 mm1_simulation <- function(lambda, mu, T) {
   # Initialisation
@@ -289,12 +298,9 @@ for (i in 1:length(rho_values)) {
   op_rho[i] <- op_param(lambda, mu, T)
 }
 
-theoretical_op_rho <- rho_values / (1 - rho_values)
-
-
 plot(rho_values, op_rho, type = "l", xlab = "rho", ylab = "Opérationnel", main = "File M/M/1", col="blue")
-lines(T, array(data=(theoretical_op_rho),dim=length(theoretical_op_rho)), col="red", type="l", lwd = 2, lty = 2)
-# lines(rho_values, theoretical_op_rho, col = "red", lwd = 2)
+# lines(T, array(data=(theoretical_op_rho),dim=length(theoretical_op_rho)), col="red", type="l", lwd = 2, lty = 2)
+lines(rho_values, theoretical_op_rho, col = "red", lwd = 2)
 legend("bottomright", legend=c("Moyenne mesurée", "Moyenne théorique"),col=c("blue", "red"), lty = 1:2, lwd=2)
 
 
