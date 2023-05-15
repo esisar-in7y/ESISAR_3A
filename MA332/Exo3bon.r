@@ -162,91 +162,76 @@ legend("bottomright", legend=c("Moyenne mesurée", "Moyenne théorique"),col=c("
 
 
 
+lambda = 0
+taux_service = 3
+pas_lambda = 0.1
 
-# Affichage des résultats
-# cbind(T, mean_clients) # Nombre moyen de clients dans le système en fonction de T
+taux_utilisation = 0
 
-moyenne_mm1 <- function(lambda, mu, TT, nb_tests){
-  q <- 0
-  for (i in 1:nb_tests){
-    q <- q + file_simple(TT)
-  }
-  return (q/nb_tests)
-}
+file_theorique = array(dim=0)
+taux_utilisation_theorique = array(dim=0)
 
-moyenne_T_croissant_mm1 <-function(lambda, mu, TT_max, step){
-  q <- array(dim = 1)
-  TT <- array(dim = 1)
-  q[1] <- 0
-  TT[1] <- 0
+file_pratique = array(dim=0)
+
+plage = (taux_service/pas_lambda)-1
+for (i in 1:plage) {
+  lambda = lambda + pas_lambda
+  taux_utilisation = lambda / taux_service
+  q = (taux_utilisation/(1-taux_utilisation))
+  taux_utilisation_theorique = append(taux_utilisation_theorique, taux_utilisation)
+  file_theorique = append(file_theorique, q)
   
-  i<-step
-  while (i<=TT_max){
-    q <- append(q, moyenne_mm1(lambda, mu, i, 100))
-    TT <- append(TT, i)
-    i<-i+step
-  }
-  plot(TT, q, xlab="T (min)", ylab="q(T)", type="l")
-}
-
-evolution_Q_mm1 <- function(TT,mu,step){
-  i<-1
-  Q <- array(dim = 1)
-  rho <- array(dim = 1)
+  max_t = 80
+  nb_echantillon = 1000
+  moy_clients_lambda = array(dim=0)
   
-  Q[1]<-0
-  rho[1]<-0
-  
-  while(i<=2*mu){
-    Q <- append(Q, moyenne_mm1(i, mu, TT, 100))
-    rho <- append(rho, i/mu)
-    i<-i+step
-  }
-  plot(rho, Q, xlab="rho", ylab="q(T)", type="l")
-}
-
-evolution_qT_mm1 <- function(TT, mu, step){
-  i<-0
-  qT <- array(dim = 1)
-  rho <- array(dim = 1)
-  
-  qT[1]<-0
-  rho[1]<-0
-  i<-step
-  while(i<=2*mu){
-    q<-0
-    for (j in 1:100){ #TT
-      moy = moyenne_mm1(i, mu, j, 10)
-      if (!is.nan(moy))
-        q <- q + moy
+  for(t_actuel in 1:max_t) {
+    moy_clients_t = array(dim=0)
+    for(k in 1:nb_echantillon) {
+      T = t_actuel
+      instants = array(dim = 0)
+      nb_clients_instant = array(dim = 0)
+      
+      nb_clients_actuel = 0
+      t = 0
+      
+      while (t < T) {
+        instants = append(instants, t)
+        nb_clients_instant = append(nb_clients_instant, nb_clients_actuel)
+        
+        temps_arrivee = rexp(1, lambda)
+        temps_service = rexp(1, taux_service)
+        
+        if (nb_clients_actuel > 0) {
+          if (temps_arrivee < temps_service) {
+            t = t + temps_arrivee
+            nb_clients_actuel = nb_clients_actuel + 1
+          } else {
+            if (temps_arrivee != temps_service){
+              nb_clients_actuel = nb_clients_actuel - 1
+            }
+            t = t + temps_service
+          }  
+        } else {
+          t = t + temps_arrivee
+          nb_clients_actuel = nb_clients_actuel + 1
+        }
+      }
+      
+      inter_temps = array(dim=0)
+      for (i in 1:length(instants)) {
+        inter_temps = append(inter_temps, instants[i+1]-instants[i])
+      }
+      inter_temps[length(instants)] = 0
+      moy_clients = weighted.mean(nb_clients_instant, inter_temps)
+      moy_clients_t = append(moy_clients_t, moy_clients)
     }
-    qT <- append(qT, (1/TT)*q)
-    
-    rho <- append(rho, i/mu)
-    i<-i+step
+    moy_clients_lambda = append(moy_clients_lambda, cumsum(moy_clients_t)[length(moy_clients_t)]/length(moy_clients_t))
   }
-  plot(rho, qT, xlab="rho", ylab="qT(T)", type="l")
+  file_pratique = append(file_pratique, (cumsum(moy_clients_lambda)[length(moy_clients_lambda)]/length(moy_clients_lambda)))
+  
 }
 
-stochastic_parameter <- function(rho) {
-  L <- rho / (1 - rho)
-  return(L)
-}
-
-operational_parameter <- function(lambda, mu) {
-  W <- 1 / (mu - lambda)
-  return(W)
-}
-
-# Exemple de valeurs pour lambda, mu, et rho
-lambda <- 1
-mu <- 2
-rho_values <- seq(0, 0.99, by = 0.01)
-
-# Calculer les paramètres stochastiques et opérationnels pour chaque valeur de rho
-stochastic_params <- sapply(rho_values, stochastic_parameter)
-operational_params <- sapply(rho_values, function(rho) operational_parameter(lambda, mu * (1 - rho)))
-
-# Tracer les résultats
-plot(rho_values, stochastic_params, xlab = "rho", ylab = "Paramètre stochastique", type = "l")
-plot(rho_values, operational_params, xlab = "rho", ylab = "Paramètre opérationnel", type = "l")
+plot(taux_utilisation_theorique, file_theorique, xlab="taux_utilisation", ylab="Q", main = "File M/M/1", col="blue", type="l")
+lines(taux_utilisation_theorique, file_pratique, col="red", type="l", lwd = 2, lty = 2)
+legend("topleft", legend=c("Moyenne théorique", "Moyenne mesurée"),col=c("blue", "red"), lty = 1:2, lwd=2)
